@@ -1,9 +1,4 @@
 #
-# XCoin API-call related functions
-#
-# @author	btckorea
-# @date	2017-04-12
-#
 # Compatible with python3 version.
 
 import time
