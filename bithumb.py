@@ -1,4 +1,9 @@
 #
+# XCoin API-call related functions
+#
+# @author	btckorea
+# @date	2017-04-12
+#
 # Compatible with python3 version.
 
 import time
@@ -171,11 +176,12 @@ class Bithumb(object):
                     }
         return self.query('/trade/cancel/', rgParams)
 
-    def btc_withdrawal(self, currency, dest_address, units):
+    def btc_withdrawal(self, currency, dest_address, units, tag = 0):
         rgParams = {
                     "units"             : units,        #float
                     "address"           : dest_address,
                     "currency"          : currency,
+                    "destination"       : tag
         }
         response =  self.query('/trade/btc_withdrawal', rgParams)
         return response
