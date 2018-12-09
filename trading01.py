@@ -138,9 +138,9 @@ class Coin:
 
         if(self.dryrun):
             bithumbAPI.targetBalance = 100
-            bithumbAPI.baseBalance   = 1000000
+            bithumbAPI.baseBalance   = 100000000
             coinoneAPI.targetBalance = 100
-            coinoneAPI.baseBalance   = 1000000
+            coinoneAPI.baseBalance   = 100000000
 
         while True:
             #check price the target
