@@ -35,50 +35,36 @@ print("askprice[%d] bidprice[%d] askqty[%d] bidqty[%d]"
 
 #buy
 units = 10
-price = askprice - 300
+price = askprice - 100
 # price = askprice
 response = bithumb.place(targetCurrency, baseCurrency, units, price, "bid")
 print(response)
+orderNumber = response['order_id']
+print(orderNumber)
 
 #time delay
 time.sleep(5)
 
-"""
-#sell
-print("=== sell ===")
-units = 10
-price = bidprice + 300
-response = bithumb.place(targetCurrency, baseCurrency, units, price, "ask")
-status = "OK" if response["status"] == "0000" else "ERROR"
-print(status)
-print(response)
-"""
 
-"""
-response = my.order_detail(orderNumber, type, targetCurrency)
-status = "OK" if response["status"] == "0000" else "ERROR"
-print(status)
+response = bithumb.order_detail(orderNumber, 'bid', targetCurrency)
 print(response)
 
-response = my.cancel(type, orderNumber, targetCurrency)
-status = "OK" if response["status"] == "0000" else "ERROR"
-print(status)
+response = bithumb.cancel('bid', orderNumber, targetCurrency)
 print(response)
-"""
 
-"""
-response = my.btc_withdrawal(targetCurrency, dest_address_xrp_coinone, units, dest_tag)
-status = "OK" if response["status"] == "0000" else "ERROR"
-print(status)
+
+dest_address_xrp_coinone = your_address
+dest_tag = 0
+response = bithumb.btc_withdrawal(targetCurrency, dest_address_xrp_coinone, units, dest_tag)
 print(response)
-"""
-"""
-response = my.krw_deposit()
-response = my.krw_withdrawal("090", bankaccount, drawal_price)
-status = "OK" if response["status"] == "0000" else "ERROR"
-print(status)
+
+
+bankaccount = your_account
+drawal_price = 1000
+response = bithumb.krw_deposit()
+response = bithumb.krw_withdrawal("090", bankaccount, drawal_price)
 print(response)
-"""
+
 
 
 
