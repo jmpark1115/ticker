@@ -5,3 +5,4 @@ trading02.py
 venv/
 .idea/
 *org.py
+__pycache__/
