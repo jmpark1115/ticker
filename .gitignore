@@ -1,3 +1,5 @@
 trading.conf
 trading02.py
 *.txt
+venv/
+.idea/
