@@ -4,3 +4,4 @@ trading02.py
 *.log
 venv/
 .idea/
+*org.py
