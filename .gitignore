@@ -1,5 +1,6 @@
 trading.conf
 trading02.py
 *.txt
+*.log
 venv/
 .idea/
