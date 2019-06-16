@@ -18,7 +18,7 @@ class Coin:
         self.trade_min_thresh = 0
         self.targetSum        = 0
         self.baseSum          = 0
-        self.targetCurrency   = 'ETC'
+        self.targetCurrency   = 'BTC'
         self.baseCurrency     = 'KRW'
         self.paymentCurrency  = 'KRW'
         self.profit = 0
@@ -174,8 +174,9 @@ class Coin:
                 self.trade_min_thresh = 10
                 if(TradeSize > self.trade_min_thresh and Profit > 0):
                     print("start trading1 TS[%d] Profit[%d]" % (TradeSize, Profit))
-                    #coinoneAPI.sell(self.targetCurrency, TradeSize, coinoneAPI.bidprice)
-                    #bithumbAPI.buy(self.targetCurrency, TradeSize,bithumbAPI.askprice)
+                    if(dryrun==0):
+                        bithumbAPI.buy(self.targetCurrency, TradeSize,bithumbAPI.askprice)
+                        coinoneAPI.sell(self.targetCurrency, TradeSize, coinoneAPI.bidprice)
                 else:
                     print("skip trading1 TS[%d] Profit[%d]" %(TradeSize, Profit))
             elif(coinoneAPI.askprice < bithumbAPI.bidprice):
@@ -184,8 +185,9 @@ class Coin:
                 self.trade_min_thresh = 10
                 if (TradeSize > self.trade_min_thresh and Profit > 10):
                     print("start trading2 TS[%d] Profit[%d]" % (TradeSize, Profit))
-                    # coinoneAPI.buy(self.targetCurrency, TradeSize, coinoneAPI.askprice)
-                    # bithumbAPI.sell(self.targetCurrency, TradeSize, bithumbAPI.bidprice)
+                    if(dryrun==0):
+                        coinoneAPI.buy(self.targetCurrency, TradeSize, coinoneAPI.askprice)
+                        bithumbAPI.sell(self.targetCurrency, TradeSize, bithumbAPI.bidprice)
                 else:
                     print("skip trading2 TS[%d] Profit[%d]" % (TradeSize, Profit))
             else:
