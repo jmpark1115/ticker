@@ -64,13 +64,13 @@ class Bithumb(object):
         api_sign  = base64.b64encode(signature.hexdigest().encode('utf-8'))
         return api_sign
 
-    def query(self, endpoint, rgParams):
+    def query(self, endpoint, params):
         base_url = 'https://api.bithumb.com'
         endpoint_item_array = {
             "endpoint": endpoint
         };
 
-        uri_array = dict(endpoint_item_array, **rgParams)  # Concatenate the two arrays.
+        uri_array = dict(endpoint_item_array, **params)  # Concatenate the two arrays.
         e_uri_data = urllib.parse.urlencode(uri_array)
 
         # Api-Nonce information generation.
@@ -112,47 +112,47 @@ class Bithumb(object):
 
     # info api
     def account(self, currency):
-        rgParams = {
+        params = {
                     "currency" : currency
         }
-        return self.query('/info/account/'+ currency, rgParams)
+        return self.query('/info/account/'+ currency, params)
 
     def balance(self, currency):
-        rgParams = {
+        params = {
                     "currency": currency
         }
-        return self.query('/info/balance/' + currency, rgParams)
+        return self.query('/info/balance/' + currency, params)
 
     def infoticker(self, market):  # latest transaction info
         return self.query('ticker', {'market': market})
 
     def orders(self, order_id, type, count, after, currency): # 회원의 판매, 구매 거래 주문 등록 또는 진행중인 거래
-        rgParams = {
+        params = {
             "order_id": order_id,
             "type": type,
             "currency": currency
         }
-        return self.query('/info/orders/', rgParams)
+        return self.query('/info/orders/', params)
         # return self.query('orders', {'UUID': UUID, 'type':type, 'count':count, 'after':after, 'currency':currency})
 
     def order_detail(self, order_id, type, currency): # 회원의 판/구매 체결 내역
-        rgParams = {
+        params = {
                     "order_id"  : order_id,
                     "type"      : type,
                     "currency"  : currency
                     }
-        return self.query('/info/order_detail/', rgParams)
+        return self.query('/info/order_detail/', params)
 
     # trade api
     def place(self, currency, payment_currency,units,price,type):
-        rgParams = {
+        params = {
                     "order_currency"    : currency,
                     "payment_currency"  : payment_currency,
                     "units"             : units,
                     "price"             : int(price),
                     "type"              : type
         }
-        return self.query('/trade/place/', rgParams)
+        return self.query('/trade/place/', params)
 
     def buy(self, currency, units, price):
         payment_currency = "KRW"
@@ -169,35 +169,35 @@ class Bithumb(object):
         return status, orderNumber, response
 
     def cancel(self, type, order_id, currency):
-        rgParams = {
+        params = {
                     'type'    :type,
                     'order_id': order_id,
                     'currency': currency
                     }
-        return self.query('/trade/cancel/', rgParams)
+        return self.query('/trade/cancel/', params)
 
     def btc_withdrawal(self, currency, dest_address, units, tag = 0):
-        rgParams = {
+        params = {
                     "units"             : units,        #float
                     "address"           : dest_address,
                     "currency"          : currency,
                     "destination"       : tag
         }
-        response =  self.query('/trade/btc_withdrawal', rgParams)
+        response =  self.query('/trade/btc_withdrawal', params)
         return response
 
     def krw_withdrawal(self, bank='', account='', price=0):
-        rgParams = {
+        params = {
                     "bank"              : bank,
                     "account"           : account,
                     "price"             : price,  # float
         }
-        response =  self.query('/trade/krw_withdrawal', rgParams)
+        response =  self.query('/trade/krw_withdrawal', params)
         return response
 
     def krw_deposit(self):
-        rgParams = {}
-        response =  self.query('/trade/krw_deposit', rgParams)
+        params = {}
+        response =  self.query('/trade/krw_deposit', params)
         return response
 
     def get_last_info(self, base, currency):
