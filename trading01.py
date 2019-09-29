@@ -149,7 +149,7 @@ class Coin:
             bithumbAPI.bidprice = float(response["data"]["bids"][0]["price"])
             bithumbAPI.askqty   = float(response["data"]["asks"][0]["quantity"])
             bithumbAPI.bidqty   = float(response["data"]["bids"][0]["quantity"])
-            logging.info("**{} : ask {:.0f} bid {:.0f} askqty {:.0f} bidqty {:.0f}"
+            logging.info("**{} : ask {:.0f} bid {:.0f} askqty {:.4f} bidqty {:.4f}"
                          .format("bithumb", bithumbAPI.askprice,bithumbAPI.bidprice, \
                          bithumbAPI.askqty,bithumbAPI.bidqty ))
 
@@ -158,7 +158,7 @@ class Coin:
             coinoneAPI.askqty   = float(response['ask'][0]['qty'])
             coinoneAPI.bidprice = float(response['bid'][0]['price'])
             coinoneAPI.bidqty   = float(response['bid'][0]['qty'])
-            logging.info("**{} : ask {:.0f} bid {:.0f} askqty {:.0f} bidqty {:.0f}"
+            logging.info("**{} : ask {:.0f} bid {:.0f} askqty {:.4f} bidqty {:.4f}"
                          .format("coinone", coinoneAPI.askprice,coinoneAPI.bidprice, \
                          coinoneAPI.askqty,coinoneAPI.bidqty ))
 
