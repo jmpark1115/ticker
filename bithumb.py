@@ -168,7 +168,7 @@ class Bithumb(object):
         orderNumber = response.get("order_id", "orderID is not key")
         return status, orderNumber, response
 
-    def cancel(self, type, order_id, currency):
+    def cancel(self, order_id, type, currency):
         params = {
                     'type'    :type,
                     'order_id': order_id,
@@ -259,7 +259,7 @@ class Bithumb(object):
                    print("loop %d" % count)
                    continue
                else:             # failure in waiting trading complete
-                   resp = self.cancel(type, orderNumber, currency)
+                   resp = self.cancel(orderNumber, type, currency)
                    print("ko %s" % resp)
                    return "NG", units_traded
             elif resp["status"] == "5600":   # maybe pending
@@ -267,11 +267,11 @@ class Bithumb(object):
                     print("loop 5600 %d" % count)
                     continue
                 else:                        # too long to wait to start trading
-                    resp = self.cancel(type, orderNumber,currency)
+                    resp = self.cancel(orderNumber, type, currency)
                     print("bith: trading not exist. cancel %s" % resp)
                     return "NG", 0
             else:   # unacceptable error
-               resp = self.cancel(type, orderNumber, currency)
-               print("bith: missed order")
-               return "NG", 0
+                resp = self.cancel(orderNumber, type, currency)
+                print("bith: missed order")
+                return "NG", 0
 
