@@ -17,6 +17,7 @@ url = 'https://api.coinone.co.kr/ticker'
 data = {'currency' : 'all'}
 res = requests.get(url, params=data)
 ticker = json.loads(res.content)
-cBTC = int(ticker['btc']['last'])
+temp = ticker['btc']['last']
+cBTC = int(float(ticker['btc']['last'])) # 소숫점이 있어 float 으로 변환 후 int 함.
 print("Coinone BTC(%.2f)" % cBTC)
 
