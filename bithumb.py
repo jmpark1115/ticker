@@ -135,11 +135,12 @@ class Bithumb(object):
         return self.query('/info/orders/', params)
         # return self.query('orders', {'UUID': UUID, 'type':type, 'count':count, 'after':after, 'currency':currency})
 
-    def order_detail(self, order_id, type, currency): # 회원의 판/구매 체결 내역
+    def order_detail(self, order_id, type, order_currency, payment_currency): # 회원의 판/구매 체결 내역
         params = {
                     "order_id"  : order_id,
                     "type"      : type,
-                    "currency"  : currency
+                    "order_currency"  : order_currency,
+                    "payment_currency" : payment_currency,
                     }
         return self.query('/info/order_detail/', params)
 
