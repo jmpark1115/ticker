@@ -28,7 +28,7 @@ class Coin(object):
         self.last_update      = 0
         self.bithumb_enabled  = False
         self.traded           = False
-        self.dryrun           = 1
+        self.dryrun           = 0   # 1: simultation, 0 : real
         self.rate             = 1.001
         self.interval         = 5
         self.max              = 0
@@ -50,9 +50,9 @@ class Coin(object):
         SellBalance = _to.targetBalance
         BuyBalance  = _from.baseBalance
 
-        if (TradeSize > SellBalance):
+        if TradeSize > SellBalance :
             TradeSize = SellBalance
-        if(TradeSize * _from.askprice > BuyBalance):
+        if TradeSize * _from.askprice > BuyBalance :
             TradeSize = BuyBalance / _from.askprice
         TradeSize = int(TradeSize) #truncate under point
         Profit    = TradeSize *(_to.bidprice - _from.askprice) - TradeSize*2*0.001
@@ -136,7 +136,7 @@ class Coin(object):
         logging.info("**{} : (tBal: {:.8f}) | (pBal: {:.4f})**"
                      .format("coinone", coinoneAPI.targetBalance, coinoneAPI.baseBalance))
 
-        if(self.dryrun):
+        if self.dryrun:
             bithumbAPI.targetBalance = 100
             bithumbAPI.baseBalance   = 100000000
             coinoneAPI.targetBalance = 100
@@ -168,24 +168,24 @@ class Coin(object):
             #test e
 
             #find the chance
-            if(bithumbAPI.askprice < coinoneAPI.bidprice):
+            if bithumbAPI.askprice < coinoneAPI.bidprice:
                 logging.info("do trading bithumb buy coinone sell !!!")
                 TradeSize, Profit = self.cal_profit(bithumbAPI, coinoneAPI)
                 self.trade_min_thresh = 10
-                if(TradeSize > self.trade_min_thresh and Profit > 0):
+                if TradeSize > self.trade_min_thresh and Profit > 0:
                     print("start trading1 TS[%d] Profit[%d]" % (TradeSize, Profit))
-                    if(dryrun==0):
+                    if self.dryrun==0:
                         bithumbAPI.buy(self.targetCurrency, TradeSize,bithumbAPI.askprice)
                         coinoneAPI.sell(self.targetCurrency, TradeSize, coinoneAPI.bidprice)
                 else:
                     print("skip trading1 TS[%d] Profit[%d]" %(TradeSize, Profit))
-            elif(coinoneAPI.askprice < bithumbAPI.bidprice):
+            elif coinoneAPI.askprice < bithumbAPI.bidprice:
                 logging.info("do trading coinone buy bithumb sell !!!")
                 TradeSize, Profit = self.cal_profit(coinoneAPI, bithumbAPI)
                 self.trade_min_thresh = 10
-                if (TradeSize > self.trade_min_thresh and Profit > 10):
+                if TradeSize > self.trade_min_thresh and Profit > 10:
                     print("start trading2 TS[%d] Profit[%d]" % (TradeSize, Profit))
-                    if(dryrun==0):
+                    if self.dryrun==0:
                         coinoneAPI.buy(self.targetCurrency, TradeSize, coinoneAPI.askprice)
                         bithumbAPI.sell(self.targetCurrency, TradeSize, bithumbAPI.bidprice)
                 else:
