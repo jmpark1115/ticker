@@ -12,7 +12,7 @@ from coinone import Coinone
 from configparser import ConfigParser, NoSectionError
 
 
-class Coin:
+class Coin(object):
     def __init__(self):
         self.trade_max_volume = 0
         self.trade_min_thresh = 0
