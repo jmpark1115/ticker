@@ -1,24 +1,2 @@
-This document is for guide.
-
-#test2
-test3
-test4
-test5
-test6
-test9
-test10
-test11
-test13
-test15
-test16
-test17
-
-#======
-
-test20
-test22
-test25
-test26
-
-========
-test27
+이 문서는 암호화폐 거래소 빗섬, 코인원, 코빗 API 를 활용하여
+알고리즘 트레이딩을 위한 프로젝트이다.
