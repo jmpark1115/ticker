@@ -34,7 +34,6 @@ class Coin(object):
         self.max              = 0
         self.thresh           = 0
         self.loop_number      = 0
-        self.markets  = []
         self.observer = []
 
 
@@ -43,8 +42,6 @@ class Coin(object):
         #to  : bid market, sell exchanger
 
         #determine tradesize
-        # self.trade_max_volume = 10
-        # TradeSize = min(_from.askqty, _to.bidqty, self.trade_max_volume)
         TradeSize = min(_from.askqty, _to.bidqty, self.trade_max_volume)
 
         SellBalance = _to.targetBalance
@@ -89,14 +86,11 @@ class Coin(object):
         bithumbSecret = config.get('ArbBot', 'bithumbSecret')
         coinoneKey = config.get('ArbBot', 'coinoneKey')
         coinoneSecret = config.get('ArbBot', 'coinoneSecret')
-        korbitKey = config.get('ArbBot', 'korbitKey')
-        korbitSecret = config.get('ArbBot', 'korbitSecret')
 
         chat_id = config.get('ChatBot', 'chatId')
         chat_token = config.get('ChatBot', 'chatToken')
 
         coin_name = config.get('ArbBot', 'Coin')
-        imarket    = config.get(coin_name, 'market')
         self.trade_max_volume = (float)(config.get(coin_name, 'TRADE_MAX_VOLUME'))
         self.trade_min_thresh = (float)(config.get(coin_name,'TRADE_MIN_THRESH'))
 
@@ -109,85 +103,83 @@ class Coin(object):
         self.paymentCurrency = 'KRW'
 
         # Create Exchange API Objects
-        bithumbAPI = Bithumb(bithumbKey, bithumbSecret)
-        coinoneAPI = Coinone(coinoneKey, coinoneSecret)
+        bithumb = Bithumb(bithumbKey, bithumbSecret)
+        coinone = Coinone(coinoneKey, coinoneSecret)
 
         # Main Loop
-        self.markets.append(bithumbAPI)
-        self.markets.append(coinoneAPI)
 
         #check balance bithumb and coinone
         print("===check balance")
-        response = bithumbAPI.balance(self.targetCurrency)
+        response = bithumb.balance(self.targetCurrency)
         status = 'OK' if response['status'] == "0000" else "ERROR"
         print(status)
-        bithumbAPI.targetBalance = (float)(response["data"]["available_" + self.targetCurrency.lower()])
-        bithumbAPI.baseBalance   = (float)(response["data"]["available_" + self.baseCurrency.lower()])
+        bithumb.targetBalance = (float)(response["data"]["available_" + self.targetCurrency.lower()])
+        bithumb.baseBalance   = (float)(response["data"]["available_" + self.baseCurrency.lower()])
         logging.info("**{} : (tBal: {:.8f}) | (pBal: {:.4f})**"
-              .format("bithumb", bithumbAPI.targetBalance, bithumbAPI.baseBalance))
+              .format("bithumb", bithumb.targetBalance, bithumb.baseBalance))
 
 
         #coinone
-        response = coinoneAPI.balance()
+        response = coinone.balance()
         status = 'OK' if response['errorCode'] == "0" else "ERROR"
         print(status)
-        coinoneAPI.targetBalance = (float)(response[self.targetCurrency.lower()]["avail"])
-        coinoneAPI.baseBalance   = (float)(response[self.baseCurrency.lower()]["avail"])
+        coinone.targetBalance = (float)(response[self.targetCurrency.lower()]["avail"])
+        coinone.baseBalance   = (float)(response[self.baseCurrency.lower()]["avail"])
         logging.info("**{} : (tBal: {:.8f}) | (pBal: {:.4f})**"
-                     .format("coinone", coinoneAPI.targetBalance, coinoneAPI.baseBalance))
+                     .format("coinone", coinone.targetBalance, coinone.baseBalance))
 
         if self.dryrun:
-            bithumbAPI.targetBalance = 100
-            bithumbAPI.baseBalance   = 100000000
-            coinoneAPI.targetBalance = 100
-            coinoneAPI.baseBalance   = 100000000
+            bithumb.targetBalance = 100
+            bithumb.baseBalance   = 100000000
+            coinone.targetBalance = 100
+            coinone.baseBalance   = 100000000
 
         while True:
             #check price the target
-            response = bithumbAPI.orderbook(self.targetCurrency)
-            bithumbAPI.askprice = float(response["data"]["asks"][0]["price"])
-            bithumbAPI.bidprice = float(response["data"]["bids"][0]["price"])
-            bithumbAPI.askqty   = float(response["data"]["asks"][0]["quantity"])
-            bithumbAPI.bidqty   = float(response["data"]["bids"][0]["quantity"])
+            response = bithumb.orderbook(self.targetCurrency)
+            bithumb.askprice = float(response["data"]["asks"][0]["price"])
+            bithumb.bidprice = float(response["data"]["bids"][0]["price"])
+            bithumb.askqty   = float(response["data"]["asks"][0]["quantity"])
+            bithumb.bidqty   = float(response["data"]["bids"][0]["quantity"])
             logging.info("**{} : ask {:.0f} bid {:.0f} askqty {:.4f} bidqty {:.4f}"
-                         .format("bithumb", bithumbAPI.askprice,bithumbAPI.bidprice, \
-                         bithumbAPI.askqty,bithumbAPI.bidqty ))
+                         .format("bithumb", bithumb.askprice,bithumb.bidprice, \
+                         bithumb.askqty,bithumb.bidqty ))
 
-            response = coinoneAPI.orderbook(self.targetCurrency)
-            coinoneAPI.askprice = float(response['ask'][0]['price'])
-            coinoneAPI.askqty   = float(response['ask'][0]['qty'])
-            coinoneAPI.bidprice = float(response['bid'][0]['price'])
-            coinoneAPI.bidqty   = float(response['bid'][0]['qty'])
+            response = coinone.orderbook(self.targetCurrency)
+            coinone.askprice = float(response['ask'][0]['price'])
+            coinone.askqty   = float(response['ask'][0]['qty'])
+            coinone.bidprice = float(response['bid'][0]['price'])
+            coinone.bidqty   = float(response['bid'][0]['qty'])
             logging.info("**{} : ask {:.0f} bid {:.0f} askqty {:.4f} bidqty {:.4f}"
-                         .format("coinone", coinoneAPI.askprice,coinoneAPI.bidprice, \
-                         coinoneAPI.askqty,coinoneAPI.bidqty ))
+                         .format("coinone", coinone.askprice,coinone.bidprice, \
+                         coinone.askqty,coinone.bidqty ))
 
             #test s
-            # bithumbAPI.askprice = 950
-            # coinoneAPI.bidprice = 960
+            # bithumb.askprice = 950
+            # coinone.bidprice = 960
             #test e
 
             #find the chance
-            if bithumbAPI.askprice < coinoneAPI.bidprice:
+            if bithumb.askprice < coinone.bidprice:
                 logging.info("do trading bithumb buy coinone sell !!!")
-                TradeSize, Profit = self.cal_profit(bithumbAPI, coinoneAPI)
+                TradeSize, Profit = self.cal_profit(bithumb, coinone)
                 self.trade_min_thresh = 10
                 if TradeSize > self.trade_min_thresh and Profit > 0:
                     print("start trading1 TS[%d] Profit[%d]" % (TradeSize, Profit))
                     if self.dryrun==0:
-                        bithumbAPI.buy(self.targetCurrency, TradeSize,bithumbAPI.askprice)
-                        coinoneAPI.sell(self.targetCurrency, TradeSize, coinoneAPI.bidprice)
+                        bithumb.buy(self.targetCurrency, TradeSize,bithumb.askprice)
+                        coinone.sell(self.targetCurrency, TradeSize, coinone.bidprice)
                 else:
                     print("skip trading1 TS[%d] Profit[%d]" %(TradeSize, Profit))
-            elif coinoneAPI.askprice < bithumbAPI.bidprice:
+            elif coinone.askprice < bithumb.bidprice:
                 logging.info("do trading coinone buy bithumb sell !!!")
-                TradeSize, Profit = self.cal_profit(coinoneAPI, bithumbAPI)
+                TradeSize, Profit = self.cal_profit(coinone, bithumb)
                 self.trade_min_thresh = 10
                 if TradeSize > self.trade_min_thresh and Profit > 10:
                     print("start trading2 TS[%d] Profit[%d]" % (TradeSize, Profit))
                     if self.dryrun==0:
-                        coinoneAPI.buy(self.targetCurrency, TradeSize, coinoneAPI.askprice)
-                        bithumbAPI.sell(self.targetCurrency, TradeSize, bithumbAPI.bidprice)
+                        coinone.buy(self.targetCurrency, TradeSize, coinone.askprice)
+                        bithumb.sell(self.targetCurrency, TradeSize, bithumb.bidprice)
                 else:
                     print("skip trading2 TS[%d] Profit[%d]" % (TradeSize, Profit))
             else:
