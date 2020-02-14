@@ -9,7 +9,7 @@ from bithumb import Bithumb
 from coinone import Coinone
 
 
-from configparser import ConfigParser, NoSectionError
+from configparser import ConfigParser
 
 
 class Coin(object):
@@ -94,7 +94,7 @@ class Coin(object):
         self.trade_max_volume = (float)(config.get(coin_name, 'TRADE_MAX_VOLUME'))
         self.trade_min_thresh = (float)(config.get(coin_name,'TRADE_MIN_THRESH'))
 
-        self.dryrun = (int)(config.get('ArbBot', 'dryrun'))
+        self.dryrun = int(config.get('ArbBot', 'dryrun'))
 
 
         # Load Configuration
@@ -113,8 +113,8 @@ class Coin(object):
         response = bithumb.balance(self.targetCurrency)
         status = 'OK' if response['status'] == "0000" else "ERROR"
         print(status)
-        bithumb.targetBalance = (float)(response["data"]["available_" + self.targetCurrency.lower()])
-        bithumb.baseBalance   = (float)(response["data"]["available_" + self.baseCurrency.lower()])
+        bithumb.targetBalance = float(response["data"]["available_" + self.targetCurrency.lower()])
+        bithumb.baseBalance   = float(response["data"]["available_" + self.baseCurrency.lower()])
         logging.info("**{} : (tBal: {:.8f}) | (pBal: {:.4f})**"
               .format("bithumb", bithumb.targetBalance, bithumb.baseBalance))
 
@@ -123,8 +123,8 @@ class Coin(object):
         response = coinone.balance()
         status = 'OK' if response['errorCode'] == "0" else "ERROR"
         print(status)
-        coinone.targetBalance = (float)(response[self.targetCurrency.lower()]["avail"])
-        coinone.baseBalance   = (float)(response[self.baseCurrency.lower()]["avail"])
+        coinone.targetBalance = float(response[self.targetCurrency.lower()]["avail"])
+        coinone.baseBalance   = float(response[self.baseCurrency.lower()]["avail"])
         logging.info("**{} : (tBal: {:.8f}) | (pBal: {:.4f})**"
                      .format("coinone", coinone.targetBalance, coinone.baseBalance))
 
