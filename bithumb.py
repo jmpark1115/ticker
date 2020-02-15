@@ -175,7 +175,7 @@ class Bithumb(object):
         params = {
                     'type'    :type,
                     'order_id': order_id,
-                    'currency': currency
+                    'order_currency': currency,
                     }
         return self.query('/trade/cancel/', params)
 
