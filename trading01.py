@@ -7,10 +7,9 @@ import time
 
 from bithumb import Bithumb
 from coinone import Coinone
-
+from telegram import Telegram
 
 from configparser import ConfigParser
-
 
 class Coin(object):
     def __init__(self):
@@ -34,7 +33,7 @@ class Coin(object):
         self.max              = 0
         self.thresh           = 0
         self.loop_number      = 0
-        self.observer = []
+        self.observer         = None
 
 
     def cal_profit(self, _from, _to):
@@ -106,6 +105,9 @@ class Coin(object):
         bithumb = Bithumb(bithumbKey, bithumbSecret)
         coinone = Coinone(coinoneKey, coinoneSecret)
 
+        # Observer Objets
+        tg = Telegram(chat_token, chat_id)
+        tg.message("Welcome to trading world !!!")
         # Main Loop
 
         #check balance bithumb and coinone
@@ -169,6 +171,7 @@ class Coin(object):
                     if self.dryrun==0:
                         bithumb.buy(self.targetCurrency, TradeSize,bithumb.askprice)
                         coinone.sell(self.targetCurrency, TradeSize, coinone.bidprice)
+                        tg.message("bithumb buy coinone sell")
                 else:
                     print("skip trading1 TS[%d] Profit[%d]" %(TradeSize, Profit))
             elif coinone.askprice < bithumb.bidprice:
@@ -180,6 +183,7 @@ class Coin(object):
                     if self.dryrun==0:
                         coinone.buy(self.targetCurrency, TradeSize, coinone.askprice)
                         bithumb.sell(self.targetCurrency, TradeSize, bithumb.bidprice)
+                        tg.message("coinone buy bithumb sell")
                 else:
                     print("skip trading2 TS[%d] Profit[%d]" % (TradeSize, Profit))
             else:

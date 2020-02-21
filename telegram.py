@@ -3,7 +3,7 @@
 import requests
 import json
 
-class telegram:
+class Telegram:
     tg_url_bot_general = "https://api.telegram.org/bot"
 
     def http_get(self, url):
@@ -81,5 +81,5 @@ if __name__ == "__main__":
     chat_id    = config.get('ChatBot', 'chatId')
     chat_token = config.get('ChatBot', 'chatToken')
 
-    tg = telegram(chat_token, chat_id)
+    tg = Telegram(chat_token, chat_id)
     result = tg.message("welcome to my telegram message service")
