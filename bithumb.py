@@ -252,7 +252,7 @@ class Bithumb(object):
             count += 1
             resp = self.orders(orderNumber, type, currency)
             print("bithumb: response %s" % resp)
-            if resp["status"] == "0000":  #trading success
+            if resp["status"] == "0000":  # normal operation
                units_traded = float(resp["data"][0]["units"]) - float(resp["data"][0]["units_remaining"])
                print("units_traded %.4f" % units_traded)
                if units_traded == qty:
@@ -264,14 +264,17 @@ class Bithumb(object):
                    resp = self.cancel(orderNumber, type, currency)
                    print("ko %s" % resp)
                    return "NG", units_traded
-            elif resp["status"] == "5600":   # maybe pending
-                if count < 10:               # wait to start trading
-                    print("loop 5600 %d" % count)
-                    continue
-                else:                        # too long to wait to start trading
-                    resp = self.cancel(orderNumber, type, currency)
-                    print("bith: trading not exist. cancel %s" % resp)
-                    return "NG", 0
+            elif resp["status"] == "5600":   # order_id does not exist, ie completed
+                units_traded = qty
+                return "GO", units_traded
+                # old version style
+                # if count < 10:               # wait to start trading
+                #     print("loop 5600 %d" % count)
+                #     continue
+                # else:                        # too long to wait to start trading
+                #     resp = self.cancel(orderNumber, type, currency)
+                #     print("bith: trading not exist. cancel %s" % resp)
+                #     return "NG", 0
             else:   # unacceptable error
                 resp = self.cancel(orderNumber, type, currency)
                 print("bithumb: missed order")
