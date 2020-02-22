@@ -17,4 +17,4 @@ baseCurrency   = 'KRW'
 # object created
 bithumb = Bithumb(bithumbKey, bithumbSecret)
 
-
+print("welcome to trading bot")
