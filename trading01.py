@@ -14,7 +14,7 @@ from configparser import ConfigParser
 class Coin(object):
     def __init__(self):
         self.trade_max_volume = 0
-        self.trade_min_thresh = 0
+        self.trade_min_thresh = 0 # unconditional trade
         self.targetSum        = 0
         self.baseSum          = 0
         self.targetCurrency   = 'BTC'
@@ -67,8 +67,7 @@ class Coin(object):
         fh.setLevel(logging.INFO)
 
         # Create formatter
-        #formatter = logging.Formatter('%(asctime)s %(filename)s %(message)s')
-        formatter = logging.Formatter('%(asctime)s %(message)s')
+        formatter = logging.Formatter('[%(asctime)s] [%(name)s:%(lineno)s] %(message)s')
         # Add formatter to handlers
         sh.setFormatter(formatter)
         fh.setFormatter(formatter)
@@ -165,7 +164,6 @@ class Coin(object):
             if bithumb.askprice < coinone.bidprice:
                 logging.info("do trading bithumb buy coinone sell !!!")
                 TradeSize, Profit = self.cal_profit(bithumb, coinone)
-                self.trade_min_thresh = 10
                 if TradeSize > self.trade_min_thresh and Profit > 0:
                     print("start trading1 TS[%d] Profit[%d]" % (TradeSize, Profit))
                     if self.dryrun==0:
@@ -177,8 +175,7 @@ class Coin(object):
             elif coinone.askprice < bithumb.bidprice:
                 logging.info("do trading coinone buy bithumb sell !!!")
                 TradeSize, Profit = self.cal_profit(coinone, bithumb)
-                self.trade_min_thresh = 10
-                if TradeSize > self.trade_min_thresh and Profit > 10:
+                if TradeSize > self.trade_min_thresh and Profit > 0:
                     print("start trading2 TS[%d] Profit[%d]" % (TradeSize, Profit))
                     if self.dryrun==0:
                         coinone.buy(self.targetCurrency, TradeSize, coinone.askprice)
