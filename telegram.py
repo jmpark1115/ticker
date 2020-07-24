@@ -4,10 +4,11 @@ import requests
 
 API_URL = "https://api.telegram.org/bot"
 
-class Telegram:    
+class Telegram(object):
 
-    def __init__(self, key) :
+    def __init__(self, key, chat_id) :
         self.key = key
+        self.chat_id = chat_id
 
     def get_me(self):
         url = API_URL + self.key + "/getMe"
@@ -19,10 +20,10 @@ class Telegram:
         resp = requests.get(url)
         return resp.json()
 
-    def message(self, message, chat_id):
+    def message(self, message):
         url = API_URL + self.key + "/sendMessage"
         params = {
-                  "chat_id": chat_id,
+                  "chat_id": self.chat_id,
                   "text": message
         }
         resp = requests.post(url, params=params)
@@ -38,6 +39,6 @@ if __name__ == "__main__":
     chat_id    = config.get('ChatBot', 'chatId')
     chat_token = config.get('ChatBot', 'chatToken')
 
-    tg = Telegram(chat_token)
-    result = tg.message("welcome to my telegram message service", chat_id)
+    tg = Telegram(chat_token, chat_id)
+    result = tg.message("welcome to my telegram message service")
     print(result)
