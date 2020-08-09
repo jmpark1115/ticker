@@ -152,7 +152,7 @@ class Bithumb(object):
                     "order_currency"    : currency,
                     "payment_currency"  : payment_currency,
                     "units"             : units,
-                    "price"             : int(price),
+                    "price"             : price,
                     "type"              : type
         }
         return self.query('/trade/place/', params)
