@@ -9,6 +9,8 @@ class Telegram(object):
     def __init__(self, key, chat_id) :
         self.key = key
         self.chat_id = chat_id
+        self.markdown = False
+        self.html = False
 
     def get_me(self):
         url = API_URL + self.key + "/getMe"
@@ -26,6 +28,11 @@ class Telegram(object):
                   "chat_id": self.chat_id,
                   "text": message
         }
+        if self.markdown or self.html:
+            parse_mode = "HTML"
+            if self.markdown:
+                parse_mode = "Markdown"
+            params["parse_mode"] = parse_mode
         resp = requests.post(url, params=params)
         content = resp.json()
         return content
