@@ -148,6 +148,7 @@ class Bithumb(object):
 
     # trade api
     def place(self, currency, payment_currency, units, price, type):
+
         params = {
                     "order_currency"    : currency,
                     "payment_currency"  : payment_currency,
