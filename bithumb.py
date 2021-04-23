@@ -15,7 +15,6 @@ import json
 import logging
 import requests
 
-
 class Bithumb(object):
     def __init__(self, key, secret):
         self.exid = "bithumb"
@@ -172,11 +171,12 @@ class Bithumb(object):
         orderNumber = response.get("order_id", "orderID is not key")
         return status, orderNumber, response
 
-    def cancel(self, order_id, type, currency):
+    def cancel(self, order_id, type, currency, payment):
         params = {
                     'type'    :type,
                     'order_id': order_id,
                     'order_currency': currency,
+                    'payment_currency': payment
                     }
         return self.query('/trade/cancel/', params)
 
