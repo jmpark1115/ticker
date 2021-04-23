@@ -171,7 +171,7 @@ class Bithumb(object):
         orderNumber = response.get("order_id", "orderID is not key")
         return status, orderNumber, response
 
-    def cancel(self, order_id, type, currency, payment):
+    def cancel(self, order_id, type, currency, payment='KRW'):
         params = {
                     'type'    :type,
                     'order_id': order_id,
