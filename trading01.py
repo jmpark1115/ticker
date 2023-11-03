@@ -13,11 +13,11 @@ from configparser import ConfigParser
 
 class Coin(object):
     def __init__(self):
-        self.trade_max_volume = 0
-        self.trade_min_thresh = 0 # unconditional trade
+        self.trade_max_volume = 0 # 최대 거래 수량
+        self.trade_min_thresh = 0 # 거래소 요구 최소 거래량,  0 : 무조건 거래
         self.targetSum        = 0
         self.baseSum          = 0
-        self.targetCurrency   = 'BTC'
+        self.targetCurrency   = ''
         self.baseCurrency     = 'KRW'
         self.paymentCurrency  = 'KRW'
         self.profit = 0
@@ -27,7 +27,7 @@ class Coin(object):
         self.last_update      = 0
         self.bithumb_enabled  = False
         self.traded           = False
-        self.dryrun           = 0   # 1: simultation, 0 : real
+        self.dryrun           = 0   # 0 : real, 1: simultation
         self.rate             = 1.001
         self.interval         = 5
         self.max              = 0
@@ -89,8 +89,8 @@ class Coin(object):
         chat_token = config.get('ChatBot', 'chatToken')
 
         coin_name = config.get('ArbBot', 'Coin')
-        self.trade_max_volume = (float)(config.get(coin_name, 'TRADE_MAX_VOLUME'))
-        self.trade_min_thresh = (float)(config.get(coin_name,'TRADE_MIN_THRESH'))
+        self.trade_max_volume = float(config.get(coin_name, 'TRADE_MAX_VOLUME'))
+        self.trade_min_thresh = float(config.get(coin_name,'TRADE_MIN_THRESH'))
 
         self.dryrun = int(config.get('ArbBot', 'dryrun'))
 
@@ -118,7 +118,6 @@ class Coin(object):
         bithumb.baseBalance   = float(response["data"]["available_" + self.baseCurrency.lower()])
         logging.info("**{} : (tBal: {:.8f}) | (pBal: {:.4f})**"
               .format("bithumb", bithumb.targetBalance, bithumb.baseBalance))
-
 
         #coinone
         response = coinone.balance()
