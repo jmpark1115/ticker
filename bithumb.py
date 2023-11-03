@@ -68,7 +68,7 @@ class Bithumb(object):
         base_url = 'https://api.bithumb.com'
         endpoint_item_array = {
             "endpoint": endpoint
-        };
+        }
 
         uri_array = dict(endpoint_item_array, **params)  # Concatenate the two arrays.
         e_uri_data = urllib.parse.urlencode(uri_array)
@@ -78,9 +78,7 @@ class Bithumb(object):
 
         data = endpoint + chr(0) + e_uri_data + chr(0) + nonce
         utf8_data = data.encode('utf-8')
-
-        secret_key  = self.secret
-        utf8_secret_key = secret_key.encode('utf-8')
+        utf8_secret_key = self.secret.encode('utf-8')
 
         headers = {
             'Content-Type' : 'application/x-www-form-urlencoded',
@@ -90,15 +88,20 @@ class Bithumb(object):
 
         }
         url = base_url + endpoint
-        res = requests.post(url, headers=headers, data=e_uri_data)
+        res = requests.post(url, data=e_uri_data, headers=headers, timeout=10)
         result = res.json()
         return result
 
     def public_query(self, endpoint):
         base_url = 'https://api.bithumb.com'
         url = base_url + endpoint
-        ret = urllib.request.urlopen(urllib.request.Request(url), timeout=2)
-        return json.loads(ret.read())
+        response = requests.get(url, timeout=10)
+        if response.status_code == 200:
+            response = response.json()
+            return response
+        else:
+            print('http_request_{}_{}_{}_{}'.format(url, response.text))
+        return False
 
     def ticker(self, currency):
         return self.public_query('/public/ticker/' + currency)
@@ -127,7 +130,7 @@ class Bithumb(object):
         return self.query('ticker', {'market': market})
 
 
-    def orders(self, order_id, type, currency): # 회원의 판매, 구매 거래 주문 등록 또는 진행중인 거래
+    def order_info(self, order_id, type, currency): # 회원의 판매, 구매 거래 주문 등록 또는 진행중인 거래
         params = {
             "order_id": order_id,
             "type": type,
@@ -248,35 +251,21 @@ class Bithumb(object):
 
     def review_cancel_order(self, orderNumber, type, currency, price, qty):
         units_traded = 0
-        count = 0
-        while True:
-            count += 1
-            resp = self.orders(orderNumber, type, currency)
-            print("bithumb: response %s" % resp)
-            if resp["status"] == "0000":  # normal operation
-               units_traded = float(resp["data"][0]["units"]) - float(resp["data"][0]["units_remaining"])
-               print("units_traded %.4f" % units_traded)
-               if units_traded == qty:
-                   return "GO", units_traded
-               elif count < 10:  #waiting trading complete
-                   print("loop %d" % count)
-                   continue
-               else:             # failure in waiting trading complete
-                   resp = self.cancel(orderNumber, type, currency)
-                   print("ko %s" % resp)
-                   return "NG", units_traded
-            elif resp["status"] == "5600":   # order_id does not exist, ie completed
-                units_traded = qty
-                return "GO", units_traded
-                # old version style
-                # if count < 10:               # wait to start trading
-                #     print("loop 5600 %d" % count)
-                #     continue
-                # else:                        # too long to wait to start trading
-                #     resp = self.cancel(orderNumber, type, currency)
-                #     print("bith: trading not exist. cancel %s" % resp)
-                #     return "NG", 0
-            else:   # unacceptable error
-                resp = self.cancel(orderNumber, type, currency)
-                print("bithumb: missed order")
-                return "NG", 0
+        resp = self.order_info(orderNumber, type, currency) # get info for a specific order_id
+        print("bithumb: response %s" % resp)
+        if resp["status"] == "0000":  # normal operation
+           units_traded = float(resp["data"][0]["units"]) - float(resp["data"][0]["units_remaining"])
+           print("units_traded %.4f" % units_traded)
+           if units_traded == qty: # filled
+               return "GO", units_traded
+           else:             # failure in waiting trading complete
+               resp = self.cancel(orderNumber, type, currency)
+               print("ko %s" % resp)
+               return "NG", units_traded
+        elif resp["status"] == "5600":   # order_id does not exist, ie completed
+            units_traded = qty
+            return "GO", units_traded
+        else:   # unacceptable error
+            resp = self.cancel(orderNumber, type, currency)
+            print(f"bithumb: missed order_{resp}")
+            return "NG", 0
