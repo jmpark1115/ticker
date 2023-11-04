@@ -29,7 +29,6 @@ class Bithumb(object):
         self.targetBalance = 0
         self.baseBalance   = 0
         self.default_currency = 'KRW'
-        'thank you'
 
         self.targetLast    = []
         self.baseLast      = []
